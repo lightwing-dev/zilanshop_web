@@ -1,0 +1,22 @@
+{
+    "name" : "zilansw_web",
+    "appid" : "__UNI__6D088A8",
+    "description" : "",
+    "versionName" : "1.1.1",
+    "versionCode" : "100",
+    "transformPx" : false,
+    "app-plus" : {
+        "usingComponents" : true //是否启用`自定义组件模式`，为true表示新的`自定义组件模式` ，否则为`template模板模式`   
+    },
+    /* SDK配置 */
+    "quickapp" : {},
+    /* 快应用特有相关 */
+    "mp-weixin" : {
+        /* 小程序特有相关 */
+        "appid" : "",
+        "setting" : {
+            "urlCheck" : true
+        },
+        "permission" : {}
+    }
+}
