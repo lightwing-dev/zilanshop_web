@@ -71,12 +71,12 @@
 					<image mode="widthFix" :src="CONSTANT.baseURL+product.img"></image>
 					<view class="name">{{ product.gname }}</view>
 					<view class="info">
-						<view class="price">{{ product.price }}</view>
+						<view class="price">¥{{ product.price }}</view>
 						<!-- <view class="slogan">{{ product.slogan }}</view> -->
 					</view>
 				</view>
 			</view>
-			<view class="loading-text">{{ loadingText }}</view>
+			<!-- <view class="loading-text">{{ loadingText }}</view> -->
 		</view>
 	</view>
 </template>
@@ -121,29 +121,29 @@
 			}, 1000);
 		},
 		//上拉加载，需要自己在page.json文件中配置"onReachBottomDistance"
-		onReachBottom() {
-			uni.showToast({
-				title: '触发上拉加载'
-			});
-			let len = this.productList.length;
-			if (len >= 40) {
-				this.loadingText = '到底了';
-				return false;
-			}
-			// // 演示,随机加入商品,生成环境请替换为ajax请求
-			// let end_goods_id = this.productList[len - 1].gid;
-			// for (let i = 1; i <= 10; i++) {
-			// 	let gid = end_goods_id + i;
-			// 	let p = {
-			// 		gid: gid,
-			// 		img: '../../static/img/goods/p' + (gid % 10 == 0 ? 10 : gid % 10) + '.jpg',
-			// 		name: '商品名称商品名称商品名称商品名称商品名称',
-			// 		price: '￥168',
-			// 		slogan: '1235人付款'
-			// 	};
-			// 	this.productList.push(p);
-			// }
-		},
+		// onReachBottom() {
+		// 	uni.showToast({
+		// 		title: '触发上拉加载'
+		// 	});
+		// 	let len = this.productList.length;
+		// 	if (len >= 40) {
+		// 		this.loadingText = '到底了';
+		// 		return false;
+		// 	}
+		// 	// // 演示,随机加入商品,生成环境请替换为ajax请求
+		// 	// let end_goods_id = this.productList[len - 1].gid;
+		// 	// for (let i = 1; i <= 10; i++) {
+		// 	// 	let gid = end_goods_id + i;
+		// 	// 	let p = {
+		// 	// 		gid: gid,
+		// 	// 		img: '../../static/img/goods/p' + (gid % 10 == 0 ? 10 : gid % 10) + '.jpg',
+		// 	// 		name: '商品名称商品名称商品名称商品名称商品名称',
+		// 	// 		price: '￥168',
+		// 	// 		slogan: '1235人付款'
+		// 	// 	};
+		// 	// 	this.productList.push(p);
+		// 	// }
+		// },
 		onLoad() {
 			// #ifdef APP-PLUS
 			this.statusHeight = plus.navigator.getStatusbarHeight();
@@ -296,11 +296,11 @@
 			//商品跳转
 			toGoods(e) {
 				uni.showToast({
-					title: '商品' + e.goods_id,
+					title: '商品' + e.gid,
 					icon: 'none'
 				});
 				uni.navigateTo({
-					url: '../goods/goods'
+					url: '../goods/goods?gid='+e.gid
 				});
 			},
 			//轮播图指示器
