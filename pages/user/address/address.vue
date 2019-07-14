@@ -36,9 +36,11 @@
 	</view>
 </template>
 <script>
+	import CONSTANT from '@/common/constant.js'
 	export default {
 		data() {
 			return {
+				CONSTANT: CONSTANT,
 				isSelect: false,
 				addressList: [],
 			};
@@ -124,7 +126,7 @@
 			getById(uid) {
 				let that = this;
 				uni.request({
-					url: 'http://127.0.0.1:8090/address_web/getList?uid=' + 1,
+					url: CONSTANT.baseURL + '/address_web/getList?uid=' + 1,
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
 					},

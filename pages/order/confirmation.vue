@@ -25,7 +25,7 @@
 			<view class="row" v-for="(row,index) in buylist" :key="index">
 				<view class="goods-info">
 					<view class="img">
-						<image :src="row.img.imgpath"></image>
+						<image :src="row.img"></image>
 					</view>
 					<view class="info">
 						<view class="title">{{row.name}}</view>
@@ -100,9 +100,11 @@
 </template>
 
 <script>
+	import CONSTANT from '@/common/constant.js'
 	export default {
 		data() {
 			return {
+				CONSTANT: CONSTANT,
 				buylist: [], //订单列表
 				goodsPrice: 0.0, //商品合计价格
 				sumPrice: 0.0, //用户付款价格
@@ -114,7 +116,7 @@
 			};
 		},
 		onLoad() {
-			this.getById();
+			this.getByUid();
 		},
 		onShow() {
 			//页面显示时，加载订单信息
@@ -206,10 +208,10 @@
 					url: '../user/address/address?type=select'
 				})
 			},
-			getById(uid) {
+			getByUid(uid) {
 				let that = this;
 				uni.request({
-					url: 'http://127.0.0.1:8090/address_web/getList?uid=' + 1,
+					url: CONSTANT.baseURL + '/address_web/getList?uid=' + 1,
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
 					},

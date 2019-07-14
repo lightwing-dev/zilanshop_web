@@ -11,12 +11,11 @@
 			</view> -->
 			<!-- 搜索框 -->
 			<view class="input-box">
-				<input placeholder="默认关键字" placeholder-style="color:#c0c0c0;" @tap="toSearch()" />
-				<view class="icon search"></view>
+				<input placeholder="默认关键字" placeholder-style="color:#c0c0c0;" v-model="searchName"/>
 			</view>
 			<!-- 右侧图标按钮 -->
 			<view class="icon-btn">
-				<view class="icon yuyin"></view>
+				<view class="icon search" @tap="toSearch()"></view>
 				<!-- <view class="icon tongzhi" @tap="toMsg"></view> -->
 			</view>
 		</view>
@@ -105,7 +104,8 @@
 				productList: [],
 				//热销商品
 				SalesVolume:[],
-				loadingText: '正在加载...'
+				loadingText: '正在加载...',
+				searchName:""
 			};
 		},
 		onPageScroll(e) {
@@ -268,9 +268,13 @@
 			},
 			//搜索跳转
 			toSearch() {
-				uni.showToast({
-					title: '建议跳转到新页面做搜索功能'
+				uni.navigateTo({
+					url: '../goods/goods-list?gname=' + this.searchName+ '&type=1'
 				});
+				// uni.showToast({
+				// 	title: '建议跳转到新页面做搜索功能'
+				// });
+				
 			},
 			//轮播图跳转
 			toSwiper(e) {
@@ -283,7 +287,7 @@
 			toCategory(e) {
 				//uni.showToast({title: e.name,icon:"none"});
 				uni.navigateTo({
-					url: '../goods/goods-list?cid=' + e.id + '&name=' + e.name
+					url: '../goods/goods-list?gtypeid=' + e.gtypeid + '&type=2'
 				});
 			},
 			//推荐商品跳转
@@ -313,7 +317,7 @@
 			 */
 			getBannerList() {
 				uni.request({
-					url: 'http://127.0.0.1:8090/banner_web/getList', //仅为示例，并非真实接口地址。
+					url: CONSTANT.baseURL+'/banner_web/getList', //仅为示例，并非真实接口地址。
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
 					},
@@ -328,7 +332,7 @@
 			 */
 			getGoodTypeList() {
 				uni.request({
-					url: 'http://127.0.0.1:8090/goodsType_web/getList', //仅为示例，并非真实接口地址。
+					url:  CONSTANT.baseURL+'/goodsType_web/getList', //仅为示例，并非真实接口地址。
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
 					},
@@ -343,13 +347,12 @@
 			 */
 			getGoodList() {
 				uni.request({
-					url: 'http://127.0.0.1:8090/goods_web/selectNewCreateTime', //仅为示例，并非真实接口地址。
+					url:  CONSTANT.baseURL+'/goods_web/selectNewCreateTime', //仅为示例，并非真实接口地址。
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
 					},
 					method: 'POST',
 					success: (json) => {
-						console.log(json.data.data.zgoodsimage);
 						this.productList = json.data.data
 					}
 				});
@@ -359,13 +362,12 @@
 			 */
 			getSalesVolume() {
 				uni.request({
-					url: 'http://127.0.0.1:8090/goods_web/selectSalesVolume', //仅为示例，并非真实接口地址。
+					url:  CONSTANT.baseURL+'/goods_web/selectSalesVolume', //仅为示例，并非真实接口地址。
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
 					},
 					method: 'POST',
 					success: (json) => {
-						console.log(json.data.data.zgoodsimage);
 						this.SalesVolume = json.data.data
 					}
 				});

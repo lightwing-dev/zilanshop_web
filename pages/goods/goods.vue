@@ -171,6 +171,7 @@
 			<view class="row">
 				<view class="text">商品评价({{NumberOfComments}})</view>
 				<view class="arrow" @tap="toRatings">
+					<!-- v-if="NumberOfComments!=0" -->
 					<view class="show" @tap="showComments(goodsData.gid)" v-if="NumberOfComments!=0">
 						查看全部
 						<view class="icon xiangyou"></view>
@@ -180,13 +181,13 @@
 			<view class="comment" @tap="toRatings" v-if="NumberOfComments!=0">
 				<view class="user-info">
 					<view class="face">
-						<image :src="userface"></image>
+						<image :src="CONSTANT.baseURL+goodsData.zevaluationList[0].zuser.headimg"></image>
 					</view>
-					<view class="username">xxx</view>
+					<view class="username">{{goodsData.zevaluationList[0].zuser.username}}</view>
 				</view>
 				<view class="content">
+					{{goodsData.zevaluationList[0].content}}
 					<!-- {{goodsData.comment.content}} -->
-					xxxx
 				</view>
 			</view>
 		</view>
@@ -205,6 +206,7 @@
 	export default {
 		data() {
 			return {
+				CONSTANT: CONSTANT,
 				//控制渐变标题栏的参数
 				beforeHeaderzIndex: 11, //层级
 				afterHeaderzIndex: 10, //层级
@@ -326,38 +328,27 @@
 			// },
 			// 加入购物车
 			joinCart() {
-				// if(this.selectSpec==null){
-				// return this.showSpec(() => {
-					uni.showToast({
-						title: "已加入购物车"
-					});
-				// });
-				// }
-				// uni.showToast({
-				// 	title: "已加入购物车"
-				// });
+				this.insert(this.goodsData.gid);
 			},
 			//立即购买
 			buy() {
 				// if(this.selectSpec==null){
 				// return this.showSpec(() => {
-					this.toConfirmation();
+				this.toConfirmation();
 				// });
 				// }
 				// this.toConfirmation();
 			},
 			//商品评论
 			toRatings() {
-				uni.navigateTo({
-					url: 'ratings/ratings'
-				})
+
 			},
 			//跳转确认订单页面
 			toConfirmation() {
 				let tmpList = [];
 				let goods = {
 					gid: this.goodsData.gid,
-					img: this.swiperList[0],
+					img: this.swiperList[0].imgpath,
 					name: this.goodsData.gname,
 					price: this.goodsData.price
 				};
@@ -374,7 +365,9 @@
 			},
 			//跳转评论列表
 			showComments(gid) {
-
+				uni.navigateTo({
+					url: 'ratings/ratings?gid=' + gid
+				})
 			},
 			//选择规格
 			// setSelectSpec(index){
@@ -469,7 +462,7 @@
 			getById(gid) {
 				let that = this;
 				uni.request({
-					url: 'http://127.0.0.1:8090/goods_web/getById?gid=' + gid,
+					url: CONSTANT.baseURL + '/goods_web/getById?gid=' + gid,
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
 					},
@@ -521,6 +514,34 @@
 						// 	that.swiperList = swiper;
 						// }
 
+					}
+				});
+			},
+			insert(gid) {
+				let that = this;
+				uni.request({
+					url: CONSTANT.baseURL + '/cart_web/add?gid=' + gid,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					},
+					method: 'POST',
+					success: (json) => {
+						if (json.data.code == "200") {
+							uni.showToast({
+								title: json.data.msg
+							});
+						}
+						if (json.data.code == "201") {
+							uni.showToast({
+								title: json.data.msg
+							});
+						}
+						if (json.data.code == "401") {
+							uni.showToast({
+								title: "请登录"
+							});
+							//跳转到去登录
+						}
 					}
 				});
 			}
