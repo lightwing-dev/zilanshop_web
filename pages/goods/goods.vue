@@ -30,17 +30,13 @@
 		<!-- 底部菜单 -->
 		<view class="footer">
 			<view class="icons">
-				<view class="box" @tap="share">
+				<!-- <view class="box" @tap="share">
 					<view class="icon fenxiang"></view>
 					<view class="text">分享</view>
 				</view>
 				<view class="box" @tap="toChat">
 					<view class="icon kefu"></view>
 					<view class="text">客服</view>
-				</view>
-				<!-- <view class="box" @tap="keep">
-					<view class="icon" :class="[isKeep?'shoucangsel':'shoucang']"></view>
-					<view class="text">{{isKeep?'已':''}}收藏</view>
 				</view> -->
 			</view>
 			<view class="btn">
@@ -49,42 +45,6 @@
 			</view>
 		</view>
 		<!-- share弹窗 -->
-		<view class="share" :class="shareClass" @touchmove.stop.prevent="discard" @tap="hideShare">
-			<view class="mask"></view>
-			<view class="layer" @tap.stop="discard">
-				<view class="h1">分享</view>
-				<view class="list">
-					<view class="box">
-						<image src="../../static/img/share/wx.png"></image>
-						<view class="title">
-							微信好友
-						</view>
-					</view>
-					<view class="box">
-						<image src="../../static/img/share/pyq.png"></image>
-						<view class="title">
-							朋友圈
-						</view>
-					</view>
-					<view class="box">
-						<image src="../../static/img/share/wb.png"></image>
-						<view class="title">
-							新浪微博
-						</view>
-					</view>
-					<view class="box">
-						<image src="../../static/img/share/qq.png"></image>
-						<view class="title">
-							QQ
-						</view>
-					</view>
-				</view>
-				<view class="btn" @tap="hideShare">
-					取消
-				</view>
-			</view>
-
-		</view>
 		<!-- 服务-模态层弹窗 -->
 		<view class="popup service" :class="serviceClass" @touchmove.stop.prevent="discard" @tap="hideService">
 			<!-- 遮罩层 -->
@@ -98,32 +58,6 @@
 				</view>
 				<view class="btn">
 					<view class="button" @tap="hideService">完成</view>
-				</view>
-			</view>
-		</view>
-		<!-- 规格-模态层弹窗 -->
-		<view class="popup spec" :class="specClass">
-			<!-- 遮罩层 -->
-			<view class="mask"></view>
-			<view class="layer" @tap.stop="discard">
-				<view class="content">
-					<view class="length">
-						<view class="text">数量</view>
-						<view class="number">
-							<view class="sub">
-								<view class="icon jian"></view>
-							</view>
-							<view class="input">
-								<input type="number" />
-							</view>
-							<view class="add">
-								<view class="icon jia"></view>
-							</view>
-						</view>
-					</view>
-				</view>
-				<view class="btn">
-					<view class="button">完成</view>
 				</view>
 			</view>
 		</view>
@@ -154,17 +88,20 @@
 					<view class="icon xiangyou"></view>
 				</view>
 			</view>
-			<!-- <view class="row" @tap="showSpec(false)">
-				<view class="text">选择</view>
-				<view class="content">
-					<view>选择规格：</view>
-					<view class="sp">
-						<view v-for="(item,index) in goodsData.spec" :key="index" :class="[index==selectSpec?'on':'']">{{item}}</view>
+			<view class="row">
+				<view class="text">数量:</view>
+				<view>
+					<view class="sub" @tap.stop="sub()" style="width: 10%;float: left;line-height: 26px;">
+						<view class="icon jian"></view>
 					</view>
-					
+					<view class="input" @tap.stop="discard" style="width: 10%;float: left;">
+						<input type="number" v-model="number" />
+					</view>
+					<view class="add" @tap.stop="add()" style="width: 10%;float: left;line-height: 26px;">
+						<view class="icon jia"></view>
+					</view>
 				</view>
-				<view class="arrow"><view class="icon xiangyou"></view></view>
-			</view> -->
+			</view>
 		</view>
 		<!-- 评价 -->
 		<view class="info-box comments" id="comments">
@@ -218,7 +155,7 @@
 				// #endif
 				// number:1,
 				userface: 1,
-
+				number: 1,
 
 				//轮播主图数据
 				swiperList: [],
@@ -350,7 +287,8 @@
 					gid: this.goodsData.gid,
 					img: this.swiperList[0].imgpath,
 					name: this.goodsData.gname,
-					price: this.goodsData.price
+					price: this.goodsData.price,
+					number:this.number
 				};
 				tmpList.push(goods);
 				uni.setStorage({
@@ -374,16 +312,16 @@
 			// 	this.selectSpec = index;
 			// },
 			//减少数量
-			// sub(){
-			// 	if(number<=1){
-			// 		return;
-			// 	}
-			// 	number--;
-			// },
+			sub() {
+				if (this.number <= 1) {
+					return;
+				}
+				this.number--;
+			},
 			//增加数量
-			// add(){
-			// 	number++;
-			// },
+			add() {
+				this.number++;
+			},
 			//跳转锚点
 			toAnchor(index) {
 				this.selectAnchor = index;
@@ -1177,64 +1115,6 @@
 					&.on {
 						padding: 3upx 18upx;
 						border: solid 1upx #f47925;
-					}
-				}
-			}
-
-			.length {
-				margin-top: 30upx;
-				border-top: solid 1upx #aaa;
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				padding-top: 20upx;
-
-				.text {
-					font-size: 30upx;
-				}
-
-				.number {
-					display: flex;
-					justify-content: center;
-					align-items: center;
-
-					.input {
-						width: 80upx;
-						height: 60upx;
-						margin: 0 10upx;
-						background-color: #f3f3f3;
-						display: flex;
-						justify-content: center;
-						align-items: center;
-						text-align: center;
-
-						input {
-							width: 80upx;
-							height: 60upx;
-							display: flex;
-							justify-content: center;
-							align-items: center;
-							text-align: center;
-							font-size: 26upx;
-						}
-					}
-
-					.sub,
-					.add {
-						width: 60upx;
-						height: 60upx;
-						background-color: #f3f3f3;
-						border-radius: 5upx;
-
-						.icon {
-							font-size: 30upx;
-							width: 60upx;
-							height: 60upx;
-							display: flex;
-							justify-content: center;
-							align-items: center;
-
-						}
 					}
 				}
 			}

@@ -29,9 +29,9 @@
 					</view>
 					<view class="info">
 						<view class="title">{{row.name}}</view>
-						<!-- <view class="spec">选择{{row.spec}} 数量:{{row.number}}</view> -->
+						<view class="spec">数量:{{row.number}}</view>
 						<view class="price-number">
-							<view class="price">￥{{row.price}}</view>
+							<view class="price">￥{{row.price*row.number}}</view>
 							<view class="number">
 
 							</view>
@@ -129,7 +129,8 @@
 					//合计
 					let len = this.buylist.length;
 					for (let i = 0; i < len; i++) {
-						this.goodsPrice = this.goodsPrice + (this.buylist[i].price);
+						console.log()
+						this.goodsPrice = this.goodsPrice + (this.buylist[i].number*this.buylist[i].price);
 					}
 					this.deduction = this.int / 100;
 					this.sumPrice = this.goodsPrice - this.deduction + this.freight;

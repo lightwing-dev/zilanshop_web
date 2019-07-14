@@ -34,15 +34,15 @@
 							<view class="price-number">
 								<view class="price">￥{{row.zgoods.price}}</view>
 								<view class="number">
-									<!-- <view class="sub" @tap.stop="sub(index)">
+									<view class="sub" @tap="sub(index)">
 										<view class="icon jian"></view>
-									</view> -->
-									<view class="input" @tap.stop="discard">
-										<input type="number" v-model="row.num" disabled="disabled" />
 									</view>
-									<!-- <view class="add" @tap.stop="add(index)">
+									<view class="input" @tap.stop="discard">
+										<input type="number" v-model="row.number" disabled="disabled" />
+									</view>
+									<view class="add" @tap="add(index)">
 										<view class="icon jia"></view>
-									</view> -->
+									</view>
 								</view>
 								<view class="delBtn" @tap="deleteGoods(row.zgoods.gid)">删除</view>
 							</view>
@@ -209,7 +209,8 @@
 							gid: this.goodsList[i].gid,
 							img: CONSTANT.baseURL + this.goodsList[i].zgoods.zgoodsimage[0].imgpath,
 							name: this.goodsList[i].zgoods.gname,
-							price: this.goodsList[i].zgoods.price
+							price: this.goodsList[i].zgoods.price,
+							number: this.goodsList[i].number
 						};
 						tmpList.push(goods);
 					}
@@ -256,13 +257,28 @@
 				this.isAllselected = this.isAllselected || this.goodsList.length == 0 ? false : true;
 				this.sum();
 			},
+			// 减少数量
+			sub(index) {
+				console.log(this.goodsList)
+				if (this.goodsList[index].number <= 1) {
+					return;
+				}
+				this.goodsList[index].number--;
+				this.sum();
+			},
+			// 增加数量
+			add(index) {
+				console.log(this.goodsList)
+				this.goodsList[index].number++;
+				this.sum();
+			},
 			// 合计
 			sum(e, index) {
 				this.sumPrice = 0;
 				let len = this.goodsList.length;
 				for (let i = 0; i < len; i++) {
 					if (this.goodsList[i].selected) {
-						this.sumPrice = this.sumPrice + (this.goodsList[i].zgoods.price);
+						this.sumPrice = this.sumPrice + (this.goodsList[i].number * this.goodsList[i].zgoods.price);
 					}
 				}
 				this.sumPrice = this.sumPrice.toFixed(2);
@@ -287,7 +303,7 @@
 								cid: obj.cid,
 								createTime: obj.createTime,
 								gid: obj.gid,
-								num: obj.num,
+								number: obj.num,
 								uid: obj.uid,
 								zgoods: obj.zgoods,
 								zuser: obj.zuser,
