@@ -17,37 +17,59 @@
 		<view class="category-list">
 			<!-- 左侧分类导航 -->
 			<scroll-view scroll-y="true" class="left">
-				<view class="row" v-for="(category,index) in categoryList" :key="category.gtypeid" :class="[index==showCategoryIndex?'on':'']"
-				 @tap="showCategory(index)">
+				<!-- <view class="row" v-for="(category,index) in categoryList" :key="category.gtypeid" :class="[index==showCategoryIndex?'on':'']"
+				>
 					<view class="text">
 						<view class="block"></view>
 						{{category.gtypename}}
 					</view>
-				</view>
-
+				</view> -->
+				<uni-collapse>
+					<uni-collapse-item :title="category.gtypename" v-for="(category,g) in categoryList" :key="category.gtypeid">
+						<view style="padding: 20upx; font-size: 24upx; margin-left: 40upx;" v-for="(box,i) in category.children" :key="i"
+						 @tap="showCategory(box)">
+							{{box.gtypename}}
+						</view>
+					</uni-collapse-item>
+				</uni-collapse>
 			</scroll-view>
 			<!-- 右侧子导航 -->
 			<scroll-view scroll-y="true" class="right">
-				<view class="category" v-for="(category,index) in categoryList" :key="category.gtypeid" v-show="index==showCategoryIndex">
+				<view class="category" v-for="(children,q) in categoryChildren" :key="q" v-show="children.gtypeid==showCategoryIndex">
 					<view class="banner">
-						<image :src="CONSTANT.baseURL+category.iconimgpath"></image>
+						<!-- {{showCategoryIndex}}
+						{{children.gtypeid}} -->
+						<image :src="CONSTANT.baseURL+children.iconimgpath"></image>
 					</view>
-					<view class="list">
-						<view class="box" v-for="(box,i) in category.children" :key="i" @tap="toCategory(box)">
-							<image :src="CONSTANT.baseURL+box.iconimgpath"></image>
-							<view class="text">{{box.gtypename}}</view>
+						<view class="list">
+							<view class="box" v-for="(box,i) in children.children" :key="i" @tap="toCategory(box)">
+								<image :src="CONSTANT.baseURL+box.iconimgpath"></image>
+								<view class="text">{{box.gtypename}}</view>
+							</view>
 						</view>
-					</view>
 				</view>
 			</scroll-view>
 		</view>
+
+
+
 	</view>
 </template>
 <script>
 	//高德SDK
 	import amap from '@/common/SDK/amap-wx.js';
 	import CONSTANT from '@/common/constant.js'
+	import {
+		uniBadge,
+		uniCollapse,
+		uniCollapseItem
+	} from '@dcloudio/uni-ui'
 	export default {
+		components: {
+			uniBadge,
+			uniCollapse,
+			uniCollapseItem
+		},
 		data() {
 			return {
 				CONSTANT: CONSTANT,
@@ -55,7 +77,8 @@
 				headerPosition: "fixed",
 				city: "北京",
 				//分类列表
-				categoryList: []
+				categoryList: [],
+				categoryChildren: [],
 			}
 		},
 		onPageScroll(e) {
@@ -67,16 +90,16 @@
 			}
 		},
 		onLoad() {
-			this.amapPlugin = new amap.AMapWX({
-				//高德地图KEY，随时失效，请务必替换为自己的KEY，参考：http://ask.dcloud.net.cn/article/35070
-				key: '7c235a9ac4e25e482614c6b8eac6fd8e'
-			});
+			// this.amapPlugin = new amap.AMapWX({
+			// 	//高德地图KEY，随时失效，请务必替换为自己的KEY，参考：http://ask.dcloud.net.cn/article/35070
+			// 	key: '7c235a9ac4e25e482614c6b8eac6fd8e'
+			// });
 			//定位地址
-			this.amapPlugin.getRegeo({
-				success: (data) => {
-					this.city = data[0].regeocodeData.addressComponent.city.replace(/市/g, ''); //把"市"去掉
-				}
-			});
+			// this.amapPlugin.getRegeo({
+			// 	success: (data) => {
+			// 		this.city = data[0].regeocodeData.addressComponent.city.replace(/市/g, ''); //把"市"去掉
+			// 	}
+			// });
 			this.getGoodTypeList();
 		},
 		methods: {
@@ -87,14 +110,22 @@
 				})
 			},
 			//分类切换显示
-			showCategory(index) {
-				this.showCategoryIndex = index;
+			showCategory(box) {
+				// console.log(index)
+				this.showCategoryIndex = box.gtypeid;
+				this.categoryChildren.push(box);
+				// console.log(box.children.gtypeid)
+				console.log(this.showCategoryIndex)
 			},
 			toCategory(e) {
 				//uni.showToast({title: e.name,icon:"none"});
+				// uni.navigateTo({
+				// 	url: '../goods/goods-list?cid=' + e.id + '&name=' + e.name
+				// });
 				uni.navigateTo({
-					url: '../goods/goods-list?cid=' + e.id + '&name=' + e.name
+					url: '../goods/goods-list?gtypeid=' + e.gtypeid + '&type=2'
 				});
+				
 			},
 			//搜索跳转
 			toSearch() {
@@ -280,54 +311,14 @@
 		}
 
 		.left {
-			width: 24%;
+			width: 34%;
 			left: 0upx;
 			background-color: #f2f2f2;
-
-			.row {
-				width: 100%;
-				height: 90upx;
-				display: flex;
-				align-items: center;
-
-				.text {
-					width: 100%;
-					position: relative;
-					font-size: 28upx;
-					display: flex;
-					justify-content: center;
-					color: #3c3c3c;
-
-					.block {
-						position: absolute;
-						width: 0upx;
-						left: 0;
-					}
-				}
-
-				&.on {
-					height: 100upx;
-					background-color: #fff;
-
-					.text {
-						font-size: 30upx;
-						font-weight: 600;
-						color: #2d2d2d;
-
-						.block {
-							width: 10upx;
-							height: 80%;
-							top: 10%;
-							background-color: #f06c7a;
-						}
-					}
-				}
-			}
 		}
 
 		.right {
-			width: 76%;
-			left: 24%;
+			width: 66%;
+			left: 34%;
 
 			.category {
 				width: 94%;
